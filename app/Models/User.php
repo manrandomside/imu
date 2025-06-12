@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
+use Laravel\Sanctum\HasApiTokens; // Import HasApiTokens
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens; // Tambahkan HasApiTokens trait
 
     /**
      * The attributes that are mass assignable.
@@ -417,5 +418,37 @@ class User extends Authenticatable
         return strlen($this->bio) > $length 
             ? substr($this->bio, 0, $length) . '...' 
             : $this->bio;
+    }
+
+    // ========================================
+    // API RESPONSE METHODS
+    // ========================================
+
+    /**
+     * Convert user to API array format
+     */
+    public function toApiArray()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'username' => $this->username,
+            'full_name' => $this->full_name,
+            'email' => $this->email,
+            'user_type' => $this->user_type,
+            'verification_status' => $this->verification_status,
+            'nickname' => $this->nickname,
+            'prodi' => $this->prodi,
+            'fakultas' => $this->fakultas,
+            'gender' => $this->gender,
+            'bio' => $this->bio,
+            'age' => $this->age,
+            'qualification' => $this->qualification,
+            'profile_picture' => $this->getProfilePictureUrl(),
+            'looking_for' => $this->looking_for,
+            'profile_completion' => $this->getProfileCompletionPercentage(),
+            'is_verified' => $this->isVerified(),
+            'display_name' => $this->getDisplayName(),
+        ];
     }
 }
